@@ -19,7 +19,7 @@
 #' plot_boxplot(iris, "Petal.Length", "Species")
 #'
 #' @export
-
+#'
 plot_boxplot <- function(data, x, y, ...) {
 
   ggplot(data = data, aes_string(x = y, y = x, fill = y)) +
@@ -57,7 +57,7 @@ plot_boxplot <- function(data, x, y, ...) {
 #' plot_bar(df, "cyl", "gear")
 #'
 #' @export
-
+#'
 plot_bar <- function(data, x, y, ...) {
 
   ggplot(data = data, mapping = aes_string(x = y, fill = x, color = x)) +
@@ -72,6 +72,8 @@ plot_bar <- function(data, x, y, ...) {
     guides(colour = FALSE)
 
 }
+
+
 
 
 # plot_scatter ------------------------------------------------------------
@@ -93,7 +95,7 @@ plot_bar <- function(data, x, y, ...) {
 #' plot_scatter(iris, "Petal.Length", "Petal.Width")
 #'
 #' @export
-
+#'
 plot_scatter <- function(data, x, y, ...) {
 
   ggplot(data = data, aes_string(x = x, y = y)) +

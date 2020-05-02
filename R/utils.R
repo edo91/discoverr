@@ -10,8 +10,15 @@
 #'
 missing_method <- function(f, ...){
 
-  args <- paste0(map(list(...), multi_class, collapse = "/"), collapse = ".")
-  warning("Sorry, method ", paste(f, args, sep = "."), " not available.", call. = FALSE)
+  stopifnot(length(f) == 1)
+
+  args <- list(...)
+  args <- map(args, class)
+  args <- map(args, paste, collapse = "/")
+  args <- paste0(args, collapse = ".")
+  res <- paste(f, args, sep = ".")
+  warning("Sorry, method ", res, " not available.", call. = FALSE)
 
   invisible()
 }
+

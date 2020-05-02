@@ -4,7 +4,7 @@
 \alias{plot_2var}
 \title{Bivariate Plots}
 \usage{
-plot_2var(data, x, y, ..., remove = NULL)
+plot_2var(data, x, y = NULL, remove = NULL, ...)
 }
 \arguments{
 \item{data}{a data frame or tibble}
@@ -13,9 +13,9 @@ plot_2var(data, x, y, ..., remove = NULL)
 
 \item{y}{target variable}
 
-\item{...}{extra parameters for methods}
-
 \item{remove}{a character vector of columns to exclude from plotting}
+
+\item{...}{extra parameters for methods}
 }
 \value{
 Returns invisibly a bivariate plot or a named list of bivariate plots, ggplot2 objects
@@ -32,16 +32,11 @@ test <- data.frame(num_var = rnorm(100),
                    pos_var = as.POSIXct(as.character(seq.Date(Sys.Date(), by = "day", length.out = 100))),
                    stringsAsFactors = FALSE)
 
+nn <- names(test)
+nncomb <- combn(nn, 2, simplify = FALSE)
+lapply(nncomb, function(x, test) plot_2var(test, x[1], x[2]), test)
+lapply(nncomb, function(x, test) plot_2var(test, x[2], x[1]), test)
 
-
-lapply(combn(names(test), 2, simplify = FALSE),
-       function(x, test) plot_2var(test, x[1], x[2]), test)
-lapply(combn(names(test), 2, simplify = FALSE),
-       function(x, test) plot_2var(test, x[2], x[1]), test)
-
-
-plot_2var(iris, setdiff(names(iris), "Species"), "Species")
-plot_2var(iris, setdiff(names(iris), "Species"), "Species",
- remove = names(iris)[tidyselect::starts_with("Petal", vars = names(iris))])
+plot_2var(iris, names(iris), "Species")
 
 }

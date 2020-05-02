@@ -23,96 +23,167 @@
 #'                    pos_var = as.POSIXct(as.character(seq.Date(Sys.Date(), by = "day", length.out = 100))),
 #'                    stringsAsFactors = FALSE)
 #'
+#' nn <- names(test)
+#' nncomb <- combn(nn, 2, simplify = FALSE)
+#' lapply(nncomb, function(x, test) plot_2var(test, x[1], x[2]), test)
+#' lapply(nncomb, function(x, test) plot_2var(test, x[2], x[1]), test)
 #'
-#'
-#' lapply(combn(names(test), 2, simplify = FALSE),
-#'        function(x, test) plot_2var(test, x[1], x[2]), test)
-#' lapply(combn(names(test), 2, simplify = FALSE),
-#'        function(x, test) plot_2var(test, x[2], x[1]), test)
-#'
-#'
-#' plot_2var(iris, setdiff(names(iris), "Species"), "Species")
-#' plot_2var(iris, setdiff(names(iris), "Species"), "Species",
-#'  remove = names(iris)[tidyselect::starts_with("Petal", vars = names(iris))])
+#' plot_2var(iris, names(iris), "Species")
 #'
 #' @export
-plot_2var <- function(data, x, y, ..., remove = NULL){
+#'
+plot_2var <- function(data, x, y = NULL, remove = NULL, ...){
+
+  x <- setdiff(x, remove)
+
+  if(is.null(y)) y <- x
+  else x <- setdiff(x, y)
 
   check_2var(data, x, y)
-  x <- setdiff(x, remove)
 
   xy <- expand.grid(x, y, stringsAsFactors = FALSE)
 
-  out <- pmap(xy, ~.plot_2var(data, .x, .y, ...), data, ...)
+  out <- pmap(xy, ~.plot_2var(data, .x, .y, ...))
 
   names(out) <- paste0(xy$Var2, "_vs_", xy$Var1)
 
-  return(out)
+  invisible(out)
+
+}
+
+
+#' @title Bivariate Plots
+#' @export
+.plot_2var <- function(data, x, y, ...){
+
+  UseMethod(".plot_2var", object = data[[y]])
+
 }
 
 #' @title Bivariate Plots
 #' @export
-.plot_2var <- function(data, x, y, ...) UseMethod(".plot_2var", object = data[[y]])
+.plot_2var.default   <- function(data, x, y, ...){
+
+  missing_method(".plot_2var", data[[y]])
+
+}
 
 #' @title Bivariate Plots
 #' @export
-.plot_2var.default   <- function(data, x, y, ...) missing_method(".plot_2var", data[[y]])
+.plot_2var.numeric   <- function(data, x, y, ...){
+  UseMethod(".plot_2var.numeric", object = data[[x]])
+
+}
 
 #' @title Bivariate Plots
 #' @export
-.plot_2var.numeric   <- function(data, x, y, ...) UseMethod(".plot_2var.numeric", object = data[[x]])
+.plot_2var.factor    <- function(data, x, y, ...){
+
+  .plot_2var.character(data, x, y, ...)
+
+}
 
 #' @title Bivariate Plots
 #' @export
-.plot_2var.factor    <- function(data, x, y, ...) .plot_2var.character                    (data, x, y, ...)
+.plot_2var.character <- function(data, x, y, ...){
+
+  UseMethod(".plot_2var.character", object = data[[x]])
+
+}
 
 #' @title Bivariate Plots
 #' @export
-.plot_2var.character <- function(data, x, y, ...) UseMethod(".plot_2var.character", object = data[[x]])
+.plot_2var.numeric.default   <- function(data, x, y, ...){
+
+  missing_method(".plot_2var.numeric", data[[x]])
+
+}
 
 #' @title Bivariate Plots
 #' @export
-.plot_2var.numeric.default   <- function(data, x, y, ...) missing_method(".plot_2var.numeric", data[[x]])
+.plot_2var.numeric.numeric   <- function(data, x, y, ...){
+
+  plot_scatter(data, x, y, ...)
+
+}
+
 
 #' @title Bivariate Plots
 #' @export
-.plot_2var.numeric.numeric   <- function(data, x, y, ...) plot_scatter                   (data, x, y, ...)
+.plot_2var.numeric.factor    <- function(data, x, y, ...){
+
+  .plot_2var.numeric.character(data, x, y, ...)
+
+}
+
 
 #' @title Bivariate Plots
 #' @export
-.plot_2var.numeric.factor    <- function(data, x, y, ...) .plot_2var.numeric.character    (data, x, y, ...)
+.plot_2var.numeric.character <- function(data, x, y, ...){
+
+  plot_boxplot(data, y, x, ...)
+
+}
 
 #' @title Bivariate Plots
 #' @export
-.plot_2var.numeric.character <- function(data, x, y, ...) plot_boxplot                   (data, y, x, ...)
+.plot_2var.numeric.POSIXct    <- function(data, x, y, ...){
+
+  .plot_2var.numeric.Date(data, x, y, ...)
+
+}
 
 #' @title Bivariate Plots
 #' @export
-.plot_2var.numeric.POSIXct    <- function(data, x, y, ...) .plot_2var.numeric.Date         (data, x, y, ...)
+.plot_2var.numeric.POSIXlt    <- function(data, x, y, ...){
+
+  .plot_2var.numeric.Date(data, x, y, ...)
+
+}
 
 #' @title Bivariate Plots
 #' @export
-.plot_2var.numeric.POSIXlt    <- function(data, x, y, ...) .plot_2var.numeric.Date         (data, x, y, ...)
+.plot_2var.numeric.Date      <- function(data, x, y, ...){
+
+  plot_line(data, x, y, ...)
+
+}
+
 
 #' @title Bivariate Plots
 #' @export
-.plot_2var.numeric.Date      <- function(data, x, y, ...) plot_line                      (data, x, y, ...)
+.plot_2var.character.default   <- function(data, x, y, ...){
+
+  missing_method(".plot_2var.character", data[[x]])
+
+}
+
 
 #' @title Bivariate Plots
 #' @export
-.plot_2var.character.default   <- function(data, x, y, ...) missing_method(".plot_2var.character", data[[x]])
+.plot_2var.character.numeric   <- function(data, x, y, ...){
+
+  plot_boxplot(data, x, y, ...)
+
+}
+
 
 #' @title Bivariate Plots
 #' @export
-.plot_2var.character.numeric   <- function(data, x, y, ...) plot_boxplot                 (data, x, y, ...)
+.plot_2var.character.factor    <- function(data, x, y, ...){
+
+  .plot_2var.character.character(data, x, y, ...)
+
+}
 
 #' @title Bivariate Plots
 #' @export
-.plot_2var.character.factor    <- function(data, x, y, ...) .plot_2var.character.character(data, x, y, ...)
+.plot_2var.character.character <- function(data, x, y, ...){
 
-#' @title Bivariate Plots
-#' @export
-.plot_2var.character.character <- function(data, x, y, ...) plot_bar                     (data, x, y, ...)
+  plot_bar(data, x, y, ...)
+
+}
+
 
 
 # check_2var --------------------------------------------------------------
@@ -128,8 +199,10 @@ plot_2var <- function(data, x, y, ..., remove = NULL){
 check_2var <- function(data, x, y){
 
   if(!(is.data.frame(data))) stop("data must be a dataframe")
-  if(!(is.character(x) & all(x %in% names(data)))) stop("x must be a char vector of variable names in data")
-  if(!(is.character(y) & all(y %in% names(data)))) stop("y must be a char vector of variable names in data")
+  if(!(is.character(x) & length(x) > 0 & all(x %in% names(data))))
+    stop("x must be a char vector of variable names in data")
+  if(!(is.character(y) & length(y) > 0 & all(y %in% names(data))))
+    stop("y must be a char vector of variable names in data")
 
   invisible()
 }

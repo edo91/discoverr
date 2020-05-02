@@ -42,25 +42,37 @@
 #'
 #' @export
 #'
-plot_var <- function(x, ...) {UseMethod("plot_var")}
+plot_var <- function(x, ...){
+
+  UseMethod("plot_var")
+
+}
 
 
 #' @title Plot_var for tibbles
 #' @export
-plot_var.default <- function(x, ...) missing_method("plot_var", x)
+plot_var.default <- function(x, ...){
+
+  missing_method("plot_var", x)
+
+}
 
 
 #' @title Plot_var for dataframes
 #' @export
-plot_var.data.frame <- function(x, ...) plot_var(as.list(x))
+plot_var.data.frame <- function(x, ...){
+
+  plot_var(as.list(x))
+
+}
 
 #' @title Plot_var for lists
-#' @importFrom purrr map map2
+#' @importFrom purrr walk walk2
 #' @export
 plot_var.list <- function(x, ...){
 
-  if(is.null(names(x))) map(x, plot_var, ...)
-  else map2(x, names(x), plot_var, ...)
+  if(is.null(names(x))) walk(x, plot_var, ...)
+  else walk2(x, names(x), plot_var, ...)
 
 }
 
@@ -71,13 +83,15 @@ plot_var.factor <- function(x, lab = NULL, ...) plot_var(as.character(x), lab = 
 #' @title Plot_var for numeric vectors
 #' @importFrom ggplot2 ggplot geom_histogram aes xlab theme_light theme element_blank
 #' @export
-plot_var.numeric <- function(x, lab = NULL, ...)
-  ggplot() +
-  geom_histogram(aes(x = x), bins = 30, colour = "coral4", fill = "coral3", alpha = 0.6) +
-  xlab(lab) +
-  theme_light() +
-  theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank())
+plot_var.numeric <- function(x, lab = NULL, ...){
 
+  ggplot() +
+    geom_histogram(aes(x = x), bins = 30, colour = "coral4", fill = "coral3", alpha = 0.6) +
+    xlab(lab) +
+    theme_light() +
+    theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank())
+
+}
 
 #' @title Plot_var for character vectors
 #' @importFrom ggplot2 ggplot geom_bar aes xlab theme_light coord_flip theme element_blank
@@ -104,7 +118,7 @@ plot_var.character <- function(x, lab = NULL, ...){
 
     # in case I change my mind
     gg <- ggplot() +
-      geom_bar(aes(x), colour = "royalblue4", fill = "royalblue3", alpha = 0.6) +
+      geom_bar(aes(x), colour = "steelblue", fill = "steelblue", alpha = 0.6) +
       coord_flip() +
       xlab(lab) +
       theme_light() +
@@ -121,25 +135,34 @@ plot_var.character <- function(x, lab = NULL, ...){
 #' @importFrom dplyr count
 #' @importFrom tibble tibble
 #' @export
-plot_var.Date <- function(x, lab = NULL, ...)
+plot_var.Date <- function(x, lab = NULL, ...){
 
   ggplot() +
-  geom_bar(aes(x = x), colour = NA, fill = "springgreen3", alpha = 0.6) +
-  xlab(lab) +
-  theme_light() +
-  theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank())
+    geom_bar(aes(x = x), colour = NA, fill = "springgreen3", alpha = 0.6) +
+    xlab(lab) +
+    theme_light() +
+    theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank())
 
+}
 
 #' @title Plot_var for POSIXct vectors
 #' @importFrom lubridate as_date
 #' @export
-plot_var.POSIXct    <- function(x, lab = NULL, ...) plot_var.Date(as_date(x), lab = lab, ...)
+plot_var.POSIXct    <- function(x, lab = NULL, ...){
+
+  plot_var.Date(as_date(x), lab = lab, ...)
+
+}
 
 
 #' @title Plot_var for POSIXlt vectors
 #' @importFrom lubridate as_date
 #' @export
-plot_var.POSIXlt    <- function(x, lab = NULL, ...) plot_var.Date(as_date(x), lab = lab, ...)
+plot_var.POSIXlt    <- function(x, lab = NULL, ...){
+
+  plot_var.Date(as_date(x), lab = lab, ...)
+
+}
 
 
 
