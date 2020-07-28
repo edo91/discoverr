@@ -17,7 +17,7 @@ missing_method <- function(f, ...){
   args <- map(args, paste, collapse = "/")
   args <- paste0(args, collapse = ".")
   res <- paste(f, args, sep = ".")
-  warning("Sorry, method ", res, " not available.", call. = FALSE)
+  warning("Sorry, method ", res, " not available. Suggest a chart on https://github.com/edo91/discoverr/issues", call. = FALSE)
 
   invisible()
 }

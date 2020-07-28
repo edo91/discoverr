@@ -4,48 +4,63 @@
 #'
 #' @description Bivariate plots accordig to variables type
 #'
-#' @param data a data frame or tibble
-#' @param x an explicative variable
-#' @param y target variable
-#' @param ... extra parameters for methods
-#' @param remove a character vector of columns to exclude from plotting
+#' @param data   A data frame
+#' @param x      Strings. Explicatory variables. If NULL: names(data)
+#' @param y      Strings. Target variable. If NULL: last x.
+#' @param remove Strings. Variables to exclude.
+#' @param ...    Extra parameters for methods
 #'
-#' @importFrom purrr pmap
+#' @importFrom purrr pmap walk compact is_empty
 #'
 #' @return Returns invisibly a bivariate plot or a named list of bivariate plots, ggplot2 objects
 #'
 #' @examples
 #'
-#' test <- data.frame(num_var = rnorm(100),
-#'                    chr_var = sample(letters, 100, TRUE),
-#'                    fct_var = factor(sample(LETTERS, 100, TRUE)),
-#'                    dat_var = seq.Date(Sys.Date(), by = "day", length.out = 100),
-#'                    pos_var = as.POSIXct(as.character(seq.Date(Sys.Date(), by = "day", length.out = 100))),
+#' test <- data.frame(num_var  = rnorm(100),
+#'                    num_var2 = rnorm(100),
+#'                    chr_var  = sample(letters, 100, TRUE),
+#'                    fct_var  = factor(sample(LETTERS, 100, TRUE)),
+#'                    dat_var  = seq.Date(Sys.Date(), by = "day", length.out = 100),
+#'                    pos_var  = as.POSIXct(as.character(seq.Date(Sys.Date(), by = "day", length.out = 100))),
 #'                    stringsAsFactors = FALSE)
 #'
-#' nn <- names(test)
-#' nncomb <- combn(nn, 2, simplify = FALSE)
-#' lapply(nncomb, function(x, test) plot_2var(test, x[1], x[2]), test)
-#' lapply(nncomb, function(x, test) plot_2var(test, x[2], x[1]), test)
-#'
-#' plot_2var(iris, names(iris), "Species")
+#' plot_2var(test, y = "num_var")
+#' plot_2var(test, y = "chr_var")
+#' plot_2var(iris)
+#' # automatically sets x to names of data and y to species
 #'
 #' @export
 #'
-plot_2var <- function(data, x, y = NULL, remove = NULL, ...){
+plot_2var <- function(data, x = NULL, y = NULL, remove = NULL, ...){
+
+  stopifnot(is.data.frame(data))
+  stopifnot(is.null(x)|is.character(x))
+  stopifnot(is.null(y)|is.character(y))
+  stopifnot(is.null(remove)|is.character(remove))
+
+  if(is.null(x)) x <- names(data)
 
   x <- setdiff(x, remove)
 
-  if(is.null(y)) y <- x
-  else x <- setdiff(x, y)
+  if(is.null(y)) y <- x[length(x)]
 
-  check_2var(data, x, y)
+  x <- setdiff(x, y)
+
+  stopifnot(all(y %in% names(data)))
+  stopifnot(all(x %in% names(data)))
+  stopifnot(length(x) > 0)
+  stopifnot(length(y) > 0)
 
   xy <- expand.grid(x, y, stringsAsFactors = FALSE)
 
   out <- pmap(xy, ~.plot_2var(data, .x, .y, ...))
 
   names(out) <- paste0(xy$Var2, "_vs_", xy$Var1)
+
+  out <- compact(out)
+
+  if(!is_empty(out)) walk(out, plot)
+  else warning("Nothing to plot")
 
   invisible(out)
 
@@ -184,26 +199,4 @@ plot_2var <- function(data, x, y = NULL, remove = NULL, ...){
 
 }
 
-
-
-# check_2var --------------------------------------------------------------
-
-#' @title Check plot_2var
-#'
-#' @param data See plot_2var
-#' @param x    See plot_2var
-#' @param y    See plot_2var
-#'
-#' @export
-#'
-check_2var <- function(data, x, y){
-
-  if(!(is.data.frame(data))) stop("data must be a dataframe")
-  if(!(is.character(x) & length(x) > 0 & all(x %in% names(data))))
-    stop("x must be a char vector of variable names in data")
-  if(!(is.character(y) & length(y) > 0 & all(y %in% names(data))))
-    stop("y must be a char vector of variable names in data")
-
-  invisible()
-}
 

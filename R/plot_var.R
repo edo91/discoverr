@@ -10,7 +10,7 @@
 #'
 #' lab: name to write
 #'
-#' @return Returns a plot or a list of plots, ggplot2 objects
+#' @return Returns a plot or a list of plots, ggplot2 objects. Automatically plots all of them.
 #'
 #' @examples
 #'
@@ -49,7 +49,7 @@ plot_var <- function(x, ...){
 }
 
 
-#' @title Plot_var for tibbles
+#' @title Plot_var for missing methods
 #' @export
 plot_var.default <- function(x, ...){
 
@@ -67,18 +67,25 @@ plot_var.data.frame <- function(x, ...){
 }
 
 #' @title Plot_var for lists
-#' @importFrom purrr walk walk2
+#' @importFrom purrr map map2 walk compact
 #' @export
 plot_var.list <- function(x, ...){
 
-  if(is.null(names(x))) walk(x, plot_var, ...)
-  else walk2(x, names(x), plot_var, ...)
+  gg <- if(is.null(names(x))) map(x, plot_var, ...)
+  else map2(x, names(x), plot_var, ...)
+
+  gg <- compact(gg)
+
+  if(!is_empty(gg)) walk(gg, plot)
+  else warning("Nothing to plot")
+
+  invisible(gg)
 
 }
 
-#' @title Plot_var for factor vactors
+#' @title Plot_var for factor vectors
 #' @export
-plot_var.factor <- function(x, lab = NULL, ...) plot_var(as.character(x), lab = lab)
+plot_var.factor <- function(x, lab = NULL, ...) plot_var(as.character(x), lab = lab, ...)
 
 #' @title Plot_var for numeric vectors
 #' @importFrom ggplot2 ggplot geom_histogram aes xlab theme_light theme element_blank

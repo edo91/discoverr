@@ -2,10 +2,10 @@
 % Please edit documentation in R/plot_var.R
 \name{plot_var.default}
 \alias{plot_var.default}
-\title{Plot_var for tibbles}
+\title{Plot_var for missing methods}
 \usage{
 \method{plot_var}{default}(x, ...)
 }
 \description{
-Plot_var for tibbles
+Plot_var for missing methods
 }

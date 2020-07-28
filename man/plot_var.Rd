@@ -12,7 +12,7 @@ plot_var(x, ...)
 \item{...}{Additional parameters (see details)}
 }
 \value{
-Returns a plot or a list of plots, ggplot2 objects
+Returns a plot or a list of plots, ggplot2 objects. Automatically plots all of them.
 }
 \description{
 Plot a vector, each variable of a list, or each variable of a dataframe
