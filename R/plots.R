@@ -13,6 +13,7 @@
 #' @return a boxplot, ggplot2 object
 #'
 #' @importFrom ggplot2 ggplot labs labs theme_light aes_string geom_boxplot theme element_blank
+#' @importFrom forcats fct_lump
 #'
 #' @examples
 #'
@@ -21,6 +22,8 @@
 #' @export
 #'
 plot_boxplot <- function(data, x, y, ...) {
+
+  data[[y]] <- fct_lump(data[[y]], n = 10)
 
   ggplot(data = data, aes_string(x = y, y = x, fill = y)) +
     geom_boxplot(colour = "gray40", alpha = 0.6)  +
@@ -34,6 +37,7 @@ plot_boxplot <- function(data, x, y, ...) {
 }
 
 
+
 # plot_bar ----------------------------------------------------------------
 
 #' @title Barplot
@@ -45,6 +49,7 @@ plot_boxplot <- function(data, x, y, ...) {
 #' @param y    string. factor variable to show the count
 #'
 #' @importFrom ggplot2 ggplot labs labs theme_light aes_string guides geom_bar position_dodge2 theme element_blank
+#' @importFrom forcats fct_lump
 #'
 #' @return a barplot, ggplot2 object
 #'
@@ -59,6 +64,9 @@ plot_boxplot <- function(data, x, y, ...) {
 #' @export
 #'
 plot_bar <- function(data, x, y, ...) {
+
+  data[[x]] <- fct_lump(data[[x]], n = 10)
+  data[[y]] <- fct_lump(data[[y]], n = 10)
 
   ggplot(data = data, mapping = aes_string(x = y, fill = x, color = x)) +
     geom_bar(position = position_dodge2(preserve = "single"), alpha = 0.6) +
@@ -99,7 +107,7 @@ plot_bar <- function(data, x, y, ...) {
 plot_scatter <- function(data, x, y, ...) {
 
   ggplot(data = data, aes_string(x = x, y = y)) +
-    geom_point(colour = "royalblue2", alpha = 0.4) +
+    geom_point(colour = "royalblue2", alpha = 0.4, size = 3) +
 
     labs(title = paste("Scatter Plot -", x, "vs", y),
          x = x,
