@@ -42,7 +42,12 @@ plot_2var <- function(data, x = NULL, y = NULL, remove = NULL, ...){
 
   x <- setdiff(x, remove)
 
-  if(is.null(y)) y <- x[length(x)]
+  if(is.null(y)){
+
+    y <- x[length(x)]
+    message("y is assumed to be the last column of data")
+
+  }
 
   x <- setdiff(x, y)
 

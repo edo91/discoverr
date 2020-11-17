@@ -1,30 +1,27 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# discoverr
+# `discoverr`
 
-The goal of discoverr is to automate the first data discovery steps.
+The goal of `discoverr` is to automate the first data discovery steps.
 
 ## Installation
 
-You can install the released version of discoverr from
-[CRAN](https://CRAN.R-project.org) with:
+You can install `discoverr` with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("edo91/prettifier")
+devtools::install_github("edo91/discoverr")
 ```
 
 ## Example
 
-TThis is a basic example which shows you how to solve a common problem:
+This is a basic example which shows you how to solve a common problem:
 
 ``` r
 library(discoverr)
 #> Registered S3 method overwritten by 'GGally':
 #>   method from   
 #>   +.gg   ggplot2
-## basic example code
 ```
 
 ``` r
@@ -36,6 +33,7 @@ plot_var(iris)
 
 ``` r
 plot_2var(iris)
+#> y is assumed to be the last column of data
 ```
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-3-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-3-3.png" width="100%" /><img src="man/figures/README-unnamed-chunk-3-4.png" width="100%" />
